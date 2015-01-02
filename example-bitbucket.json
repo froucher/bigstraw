@@ -1,10 +1,10 @@
 [
   {
     "dir": "test",
-    "org": "PolymerLabs",
+    "org": "",
     "url": "bitbucket.org/froucher0",
     "repos": [
-      "bigstraw"
+      "test"
     ]
   }
 ]

@@ -182,13 +182,13 @@ async.waterfall([
     configs = configs.reduce(function(a, b){ return a.concat(b); });
     configs.forEach(function(conf) {
       var access = '';
-      if (conf.org !== '') {
-        access += conf.org + '/';
-      }
-      if (conf.url === '') {
+      if (conf.url === undefined || conf.url === '') {
         access += 'github.com/';
       } else {
         access += conf.url + '/';
+      }
+      if (conf.org !== '') {
+        access += conf.org + '/';
       }
       conf.repos.forEach(function(r) {
         folders[conf.dir] = 1;
