@@ -101,7 +101,10 @@ function cloneOrUpdate(repo, callback) {
 }
 
 function gitWrapper(repo, args, cwd, callback) {
-  var git = spawn('git', args, {cwd: cwd, stdout: 'ignore'});
+  var git = spawn('git', args, {
+    cwd: cwd,
+    stdout: 'ignore'
+  });
   var operation = args[0];
   // print a nice status message "=== pull foo ==="
   if (!options.quiet) {
@@ -138,8 +141,9 @@ function update(repo, callback) {
       });
     }
   ];
-  if (options.branch) {
-    ops.unshift(async.apply(gitWrapper, repo, ['checkout', options.branch], repo.to));
+  var branch = repo.branch || options.branch;
+  if (branch) {
+    ops.unshift(async.apply(gitWrapper, repo, ['checkout', branch], repo.to));
   }
   async.series(ops, callback);
 }
@@ -154,9 +158,10 @@ function clone(repo, callback) {
     ACCESS + repo.from,
     path.basename(repo.to)
   ];
-  if (options.branch) {
+  var branch = repo.branch || options.branch;
+  if (branch) {
     args.push('-b');
-    args.push(options.branch);
+    args.push(branch);
   }
   gitWrapper(repo, args, path.dirname(repo.to), callback);
 }
@@ -165,11 +170,10 @@ async.waterfall([
   // read and parse JSON configs from commandline
   function(callback) {
     var fn = async.seq(
-      fs.readFile,
-      function(data, callback) {
+      fs.readFile, function(data, callback) {
         try {
           callback(null, JSON.parse(data));
-        } catch(e) {
+        } catch (e) {
           callback(e, null);
         }
       });
@@ -179,7 +183,9 @@ async.waterfall([
   function(configs, callback) {
     var repos = [];
     var folders = [];
-    configs = configs.reduce(function(a, b){ return a.concat(b); });
+    configs = configs.reduce(function(a, b) {
+      return a.concat(b);
+    });
     configs.forEach(function(conf) {
       var access = '';
       if (conf.url === undefined || conf.url === '') {
@@ -193,7 +199,11 @@ async.waterfall([
       conf.repos.forEach(function(r) {
         folders[conf.dir] = 1;
         var repoNames = githubToCheckout(r);
-        repos.push({from: access + repoNames[0], to: path.join(conf.dir, repoNames[1])});
+        repos.push({
+          from: access + '/' + repoNames[0],
+          to: path.join(conf.dir, repoNames[1]),
+          branch: conf.branch
+        });
       });
     });
     callback(null, repos, folders);
@@ -227,8 +237,8 @@ async.waterfall([
     });
   }
 ], function(err) {
-  if (err) {
-    console.log(chalk.bold.red(String(err)));
-    process.exit(1);
-  }
-});
+    if (err) {
+      console.log(chalk.bold.red(String(err)));
+      process.exit(1);
+    }
+  });
