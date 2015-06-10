@@ -200,7 +200,7 @@ async.waterfall([
         folders[conf.dir] = 1;
         var repoNames = githubToCheckout(r);
         repos.push({
-          from: access + '/' + repoNames[0],
+          from: access + repoNames[0],
           to: path.join(conf.dir, repoNames[1]),
           branch: conf.branch
         });
