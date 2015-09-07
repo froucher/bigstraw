@@ -2,9 +2,9 @@
   {
     "dir": "test",
     "org": "",
-    "url": "descinet.bbva.es/stash/scm/bres",
+    "url": "private.stashserver.com/stash/scm/project",
     "repos": [
-      "bbva-ui-transfers.git"
+      "repo-example.git"
     ]
   }
 ]
