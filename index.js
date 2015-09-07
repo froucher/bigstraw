@@ -101,10 +101,7 @@ function cloneOrUpdate(repo, callback) {
 }
 
 function gitWrapper(repo, args, cwd, callback) {
-  var git = spawn('git', args, {
-    cwd: cwd,
-    stdout: 'ignore'
-  });
+  var git = spawn('git', args, {cwd: cwd, stdout: 'ignore'});
   var operation = args[0];
   // print a nice status message "=== pull foo ==="
   if (!options.quiet) {
@@ -170,10 +167,11 @@ async.waterfall([
   // read and parse JSON configs from commandline
   function(callback) {
     var fn = async.seq(
-      fs.readFile, function(data, callback) {
+      fs.readFile,
+      function(data, callback) {
         try {
           callback(null, JSON.parse(data));
-        } catch (e) {
+        } catch(e) {
           callback(e, null);
         }
       });
@@ -183,9 +181,7 @@ async.waterfall([
   function(configs, callback) {
     var repos = [];
     var folders = [];
-    configs = configs.reduce(function(a, b) {
-      return a.concat(b);
-    });
+    configs = configs.reduce(function(a, b){ return a.concat(b); });
     configs.forEach(function(conf) {
       var access = '';
       if (conf.url === undefined || conf.url === '') {
@@ -237,8 +233,8 @@ async.waterfall([
     });
   }
 ], function(err) {
-    if (err) {
-      console.log(chalk.bold.red(String(err)));
-      process.exit(1);
-    }
-  });
+  if (err) {
+    console.log(chalk.bold.red(String(err)));
+    process.exit(1);
+  }
+});
